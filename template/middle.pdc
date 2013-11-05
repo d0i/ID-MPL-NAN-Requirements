@@ -1,4 +1,55 @@
-# introduction
+# Introduction
 
-TBD
+Neighborhood area networks (NAN) is expected to use MPL to distribute information over wireless mesh network with 6lowpan/802.15.4. This document is to describe expected use case and requirements of NAN, based on OpenSG requirements.
+
+(TBD)
+
+# SG Network Requirement
+
+(TBD)
+
+# Use Cases and Requirements for MPL
+
+(TBD)
+
+## Network Scale
+
+(TBD)
+
+10,000 nodes in 10 hops.
+
+## Commanding Use Case
+
+(TBD)
+
+- Transmission of 100 bytes avg to 98% of nodes within 5 seconds
+
+## Per-Hop Requirement for Commanding
+
+(TBD)
+
+500ms/hop
+
+## File Transfer Use Case
+
+(TBD)
+
+- Transmission of 2MB to 98% of nodes within 7 days
+- Transmission of 50kB to 98% of nodes within 3 days
+
+## Per-Hop Requrement for File Transfer
+
+(TBD)
+
+- 2MB/7 days = 3.5 bytes per second
+- 1500 octet payload => approx 1 data packet in 7 minutes
+- approx 1400 packets in 7 days
+
+- 50KB/3 days = 0.19 bytes per second
+- 1500 octet payload => approx 1 data packet in 2 hour 20 min.
+- approx 100 packets in 3 days
+
+
+
+
 

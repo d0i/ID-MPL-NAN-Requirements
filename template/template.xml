@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd">
-<rfc ipr="trust200902" category="info" docName="draft-doi-template-tbd-00">
+<rfc ipr="trust200902" category="info" docName="draft-doi-roll-mpl-nan-requirements-00">
 <?rfc toc="yes"?>         <!-- generate a table of contents -->
 <?rfc symrefs="yes"?>     <!-- use anchors instead of numbers for references -->
 <?rfc sortrefs="yes" ?>   <!-- alphabetize the references -->
 <?rfc compact="yes" ?>    <!-- conserve vertical whitespace -->
 <?rfc subcompact="no" ?>  <!-- but keep a blank line between list items -->
  <front>
-        <title abbrev="FIXME">FIXME</title>
+        <title abbrev="NAN Requirement for MPL">Neighborhood Area Network Requirements for MPL</title>
 
         <author initials="Y." surname="Doi"
                 fullname="Yusuke Doi">
@@ -28,13 +28,13 @@
             </address>
         </author>
 
-        <date month="August" year="2012"/>
+        <date month="November" year="2013"/>
 
-        <area>FIXME</area>
-        <workgroup>FIXME</workgroup>
-        <keyword>FIXME</keyword>
+        <area>Rtg</area>
+        <workgroup>roll</workgroup>
+        <keyword>MPL, NAN</keyword>
         <abstract>
-            <t>FIXME</t>
+            <t>Neighborhood area networks (NAN) is expected to use MPL to distribute information over wireless mesh network with 6lowpan/802.15.4. This document is to describe expected use case and requirements of NAN, based on OpenSG requirements.</t>
         </abstract>
 </front>
 
@@ -46,5 +46,6 @@
     <references title="Normative References">
         <?rfc include="../refs/reference.RFC.2119.xml"?>
     </references>
+    <?rfc include="back.xml"?>
 </back>
 </rfc>
