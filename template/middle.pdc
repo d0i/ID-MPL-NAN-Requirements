@@ -41,15 +41,25 @@ Neighborhood area networks (NAN) is expected to use MPL to distribute informatio
 
 (TBD)
 
+Case 1:
 - 2MB/7 days = 3.5 bytes per second
 - 1500 octet payload => approx 1 data packet in 7 minutes
 - approx 1400 packets in 7 days
 
+Case 2:
 - 50KB/3 days = 0.19 bytes per second
 - 1500 octet payload => approx 1 data packet in 2 hour 20 min.
 - approx 100 packets in 3 days
 
+# Other Issues
 
+- Initial state (small start) and growth of the network
+- Exceptional deployments (high density, uneven distribution, etc)
 
+# IANA Considerations
 
+This document does not make any request to IANA.
 
+# Security Considerations
+
+No new security threat is identified by this requirement.
