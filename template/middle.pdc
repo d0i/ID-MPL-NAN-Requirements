@@ -1,43 +1,51 @@
 # Introduction
 
-Neighborhood area networks (NAN) is expected to use MPL to distribute information over wireless mesh network with 6lowpan/802.15.4. This document is to describe expected use case and requirements of NAN, based on OpenSG requirements.
+Neighborhood area networks (NAN) is expected to use MPL to distribute information over wireless mesh network with 6lowpan/802.15.4. This document is to describe expected use case and requirements of NAN, based on public requirements.
 
-(TBD)
+This document describes what's included in the requirement, how the requirements for a network and multicast are extracted, and some analysis on them.
 
 # SG Network Requirement
 
-(TBD)
+[(SG Network Requirement)](#ext.SGRequirement) is a public document from UCAIug, and summarizes network communication requirements over smart grid network. There are various components and communications described in the document. Among them, use cases relates to multicast (one-to-many) communication over neighborhood area can be categorized to following two classes.
+
+ - Commanding
+ - Firmware Update / File Transfer
+
+Typical commanding usecases are Pricing and DR-DLC. Typical pricing usecase is distribution of price information of energy from devices managed by utility company (data aggregation point). DR-DLC stands for demand response and direct load control, and this includes critical peak pricing to reduce peak energy consumption (DR) and shut off of unnecessary devices on customer's side (DLC). These commanding use case has short message with shorter end-to-end latency requirement.
+
+Firmware update and other file transfer is also required by NAN. This usecase does not impose shorter deadline, but usually the amount of data is far larger than commanding. 100 or few thousands of frames are required to accomplish file transfer task.
 
 # Use Cases and Requirements for MPL
 
-(TBD)
+In this section, we describe multicast-related use cases defined in SG Network Requirements.
 
-## Network Scale
+## Network Scale Assumption
 
-(TBD)
-
-10,000 nodes in 10 hops.
+A mesh network may consist of up to 10,000 nodes within 10 hops at most.
 
 ## Commanding Use Case
 
-(TBD)
-
-- Transmission of 100 bytes avg to 98% of nodes within 5 seconds
+According to SG Network Requirements, commanding use cases requires a message with average of 100 bytes. They should be delivered to 98% of nodes in a NAN within 5 seconds.
 
 ## Per-Hop Requirement for Commanding
 
-(TBD)
+5 seconds in 10 hops means 500 milliseconds per hop is allowed. This includes encoding/decoding, trickle timers wait, etc.
 
-500ms/hop
+In MPL, data packets are sent after update of control information base. If PROACTIVE_FORWARDING is false, data message transmission occurs after control message transmission and detection of inconsistency. If it's true, data transmission will occur without control message transmission. Hence, If PROACTIVE_FORWARDING is false, sum of minimal intervals of control and data messages must be lower than 500ms. If PROACTIVE_FORWARDING is true, minimal interval of data messages must be lower than 500ms.
 
 ## File Transfer Use Case
 
-(TBD)
+Following two cases are defined for file transfer.
 
-- Transmission of 2MB to 98% of nodes within 7 days
-- Transmission of 50kB to 98% of nodes within 3 days
+- Transmission of 2MB to 98% of nodes within 7 days (Firmware updates)
+- Transmission of 50kB to 98% of nodes within 3 days (File transfers)
 
-## Per-Hop Requrement for File Transfer
+Assuming MTU=1500, we can estimate how many bytes we need to transfer to satisfy the use cases.
+
+- approx 1400 packets in 7 days for firmware updates
+- approx 100 packets in 3 days for file transfers
+
+## Per-Hop Requirement for File Transfer
 
 (TBD)
 
@@ -51,10 +59,12 @@ Case 2:
 - 1500 octet payload => approx 1 data packet in 2 hour 20 min.
 - approx 100 packets in 3 days
 
-# Other Issues
+# Other Topics
 
 - Initial state (small start) and growth of the network
 - Exceptional deployments (high density, uneven distribution, etc)
+- Candidates of tech: SNMP, CoAP-based, NetConf, DHCPv6, ...
+
 
 # IANA Considerations
 
