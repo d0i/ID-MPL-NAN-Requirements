@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='UCAIug.SGRequirements'
+           target='http://osgug.ucaiug.org/UtiliComm/Shared Documents/Forms/DispForm.aspx?ID=702'>
+<front>
+<title>Smart Grid Network System Requirements Specification</title>
+<date month='October' day='19' year='2010' />
+</front>
+
+<format type='HTML' target='http://osgug.ucaiug.org/UtiliComm/Shared Documents/Forms/DispForm.aspx?ID=702' />
+</reference>
