@@ -1,12 +1,12 @@
 # Introduction
 
-Neighborhood area networks (NAN) is expected to use MPL to distribute information over wireless mesh network with 6lowpan/802.15.4. This document is to describe expected use case and requirements of NAN, based on public requirements.
+Neighborhood area networks (NAN), mainly for smart meters, is expected to use MPL to distribute information over wireless mesh network with 6lowpan/802.15.4. This document is to describe expected use case and requirements of NAN, based on public requirements.
 
 This document describes what's included in the requirement, how the requirements for a network and multicast are extracted, and some analysis on them.
 
 # SG Network Requirement
 
-[(SG Network Requirement)](#ext.SGRequirement) is a public document from UCAIug, and summarizes network communication requirements over smart grid network. There are various components and communications described in the document. Among them, use cases relates to multicast (one-to-many) communication over neighborhood area can be categorized to following two classes.
+[(SG Network Requirement)](#UCAIug.SGRequirements) is a public document from UCAIug, and summarizes network communication requirements over smart grid network. There are various components and communications described in the document. Among them, use cases relates to multicast (one-to-many) communication over neighborhood area can be categorized to following two classes.
 
  - Commanding
  - Firmware Update / File Transfer
@@ -21,9 +21,9 @@ In this section, we describe multicast-related use cases defined in SG Network R
 
 ## Network Scale Assumption
 
-A mesh network may consist of up to 10,000 nodes within 10 hops at most.
+A mesh network may consist of up to 10,000 nodes within 10 hops at most. This is an assumption made by this document.
 
-## Commanding Use Case
+## Commanding Use Case and Requirement
 
 According to SG Network Requirements, commanding use cases requires a message with average of 100 bytes. They should be delivered to 98% of nodes in a NAN within 5 seconds.
 
@@ -31,40 +31,53 @@ According to SG Network Requirements, commanding use cases requires a message wi
 
 5 seconds in 10 hops means 500 milliseconds per hop is allowed. This includes encoding/decoding, trickle timers wait, etc.
 
-In MPL, data packets are sent after update of control information base. If PROACTIVE_FORWARDING is false, data message transmission occurs after control message transmission and detection of inconsistency. If it's true, data transmission will occur without control message transmission. Hence, If PROACTIVE_FORWARDING is false, sum of minimal intervals of control and data messages must be lower than 500ms. If PROACTIVE_FORWARDING is true, minimal interval of data messages must be lower than 500ms.
+In MPL, data packets are sent after update of control information base. If PROACTIVE_FORWARDING is false, data message transmission occurs after control message transmission and detection of inconsistency. If it's true, data transmission will occur without control message transmission. Hence, If PROACTIVE_FORWARDING is false, sum of minimal intervals of control and data messages should be lower than 500ms. If PROACTIVE_FORWARDING is true, minimal interval of data messages should be lower than 500ms.
 
-## File Transfer Use Case
+## File Transfer Use Case and Requirement
 
 Following two cases are defined for file transfer.
 
-- Transmission of 2MB to 98% of nodes within 7 days (Firmware updates)
-- Transmission of 50kB to 98% of nodes within 3 days (File transfers)
+- Case 1: Transmission of 2MB to 98% of nodes within 7 days (Firmware updates)
+- Case 2: Transmission of 50kB to 98% of nodes within 3 days (File transfers)
 
 Assuming MTU=1500, we can estimate how many bytes we need to transfer to satisfy the use cases.
 
-- approx 1400 packets in 7 days for firmware updates
-- approx 100 packets in 3 days for file transfers
+- approx 1400 packets in 7 days for firmware updates (case 1)
+- approx 100 packets in 3 days for file transfers (case 2)
 
 ## Per-Hop Requirement for File Transfer
-
-(TBD)
 
 Case 1:
 - 2MB/7 days = 3.5 bytes per second
 - 1500 octet payload => approx 1 data packet in 7 minutes
-- approx 1400 packets in 7 days
+- approx 1400 packets in 7 days (1 packet in 432 seconds)
 
 Case 2:
 - 50KB/3 days = 0.19 bytes per second
 - 1500 octet payload => approx 1 data packet in 2 hour 20 min.
-- approx 100 packets in 3 days
+- approx 100 packets in 3 days (1 packet in 2592 seconds)
 
 # Other Topics
 
-- Initial state (small start) and growth of the network
-- Exceptional deployments (high density, uneven distribution, etc)
-- Candidates of tech: SNMP, CoAP-based, NetConf, DHCPv6, ...
+This section accommodates other topics for manageable multicast over mesh networks.
 
+## Initial state (small start) and growth of networks
+
+Smart meter networks are likely to start from small network around a
+data aggregation point (DAP) and grows as normal meters replaced by
+smart meters. Hence, network size shall change time to time. In such
+use cases, some default set of parameters may not appropriate for
+lifetime of a network.
+
+Hence, a method (management interface) to update MPL parameters in a
+network is required. Candidates are SNMP, netconf, DHCPv6, or [CoMI](#I-D.vanderstok-core-comi).
+
+Requirements for management interface are as follows:
+
+ * Simple and short packet
+ * Updateable
+ * Can work without per-device configuration prior to install
+ * Be able to 'broadcast' the configuration
 
 # IANA Considerations
 
