@@ -1,0 +1,294 @@
+<?xml version="1.0" ?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<rfc ipr="trust200902" category="info" docName="draft-doi-roll-mpl-nan-requirements-00">
+<?rfc toc="yes"?>         <!-- generate a table of contents -->
+<?rfc symrefs="yes"?>     <!-- use anchors instead of numbers for references -->
+<?rfc sortrefs="yes" ?>   <!-- alphabetize the references -->
+<?rfc compact="yes" ?>    <!-- conserve vertical whitespace -->
+<?rfc subcompact="no" ?>  <!-- but keep a blank line between list items -->
+ <front>
+        <title abbrev="NAN Requirement for MPL">Neighborhood Area Network Requirements for MPL</title>
+
+        <author initials="Y." surname="Doi"
+                fullname="Yusuke Doi">
+            <organization>TOSHIBA Corporation</organization>
+
+            <address>
+                <postal>
+                    <street>Komukai Toshiba Cho 1</street>
+                    <street>Saiwai-Ku</street>
+                    <city>Kawasaki</city> <region>Kanagawa</region>
+                    <code>2128582</code>
+                    <country>JAPAN</country>
+                </postal>
+
+                <phone>+81-45-342-7230</phone>
+                <email>yusuke.doi@toshiba.co.jp</email>
+                <uri></uri>
+            </address>
+        </author>
+
+        <date month="November" year="2013"/>
+
+        <area>Rtg</area>
+        <workgroup>roll</workgroup>
+        <keyword>MPL, NAN</keyword>
+        <abstract>
+            <t>Neighborhood area networks (NAN) is expected to use MPL to distribute information over wireless mesh network with 6lowpan/802.15.4. This document is to describe expected use case and requirements of NAN, based on OpenSG requirements.</t>
+        </abstract>
+</front>
+
+<middle>
+<!-- This document was prepared using Pandoc2rfc, https://github.com/miekg/pandoc2rfc -->
+
+  
+<section title="Introduction" anchor="introduction">
+  
+  <t>
+    Neighborhood area networks (NAN), mainly for smart meters, is
+    expected to use MPL to distribute information over wireless mesh
+    network with 6lowpan/802.15.4. This document is to describe expected
+    use case and requirements of NAN, based on public requirements.
+  </t>
+  <t>
+    This document describes what's included in the requirement, how the
+    requirements for a network and multicast are extracted, and some
+    analysis on them.
+  </t>
+</section>
+<section title="SG Network Requirement" anchor="sg-network-requirement">
+  
+  <t>
+    <xref target="UCAIug.SGRequirements">(SG Network
+    Requirement)</xref> is a public document from UCAIug, and summarizes
+    network communication requirements over smart grid network. There
+    are various components and communications described in the document.
+    Among them, use cases relates to multicast (one-to-many)
+    communication over neighborhood area can be categorized to following
+    two classes.
+  </t>
+  <t><list style="symbols">
+    <t>
+      
+        Commanding
+      
+    </t>
+    <t>
+      
+        Firmware Update / File Transfer
+      
+    </t>
+  </list></t>
+  <t>
+    Typical commanding usecases are Pricing and DR-DLC. Typical pricing
+    usecase is distribution of price information of energy from devices
+    managed by utility company (data aggregation point). DR-DLC stands
+    for demand response and direct load control, and this includes
+    critical peak pricing to reduce peak energy consumption (DR) and
+    shut off of unnecessary devices on customer's side (DLC). These
+    commanding use case has short message with shorter end-to-end
+    latency requirement.
+  </t>
+  <t>
+    Firmware update and other file transfer is also required by NAN.
+    This usecase does not impose shorter deadline, but usually the
+    amount of data is far larger than commanding. 100 or few thousands
+    of frames are required to accomplish file transfer task.
+  </t>
+</section>
+<section title="Use Cases and Requirements for MPL" anchor="use-cases-and-requirements-for-mpl">
+  
+  <t>
+    In this section, we describe multicast-related use cases defined in
+    SG Network Requirements.
+  </t>
+  <section title="Network Scale Assumption" anchor="network-scale-assumption">
+    
+    <t>
+      A mesh network may consist of up to 10,000 nodes within 10 hops at
+      most. This is an assumption made by this document.
+    </t>
+  </section>
+  <section title="Commanding Use Case and Requirement" anchor="commanding-use-case-and-requirement">
+    
+    <t>
+      According to SG Network Requirements, commanding use cases
+      requires a message with average of 100 bytes. They should be
+      delivered to 98% of nodes in a NAN within 5 seconds.
+    </t>
+  </section>
+  <section title="Per-Hop Requirement for Commanding" anchor="per-hop-requirement-for-commanding">
+    
+    <t>
+      5 seconds in 10 hops means 500 milliseconds per hop is allowed.
+      This includes encoding/decoding, trickle timers wait, etc.
+    </t>
+    <t>
+      In MPL, data packets are sent after update of control information
+      base. If PROACTIVE_FORWARDING is false, data message transmission
+      occurs after control message transmission and detection of
+      inconsistency. If it's true, data transmission will occur without
+      control message transmission. Hence, If PROACTIVE_FORWARDING is
+      false, sum of minimal intervals of control and data messages
+      should be lower than 500ms. If PROACTIVE_FORWARDING is true,
+      minimal interval of data messages should be lower than 500ms.
+    </t>
+  </section>
+  <section title="File Transfer Use Case and Requirement" anchor="file-transfer-use-case-and-requirement">
+    
+    <t>
+      Following two cases are defined for file transfer.
+    </t>
+    <t><list style="symbols">
+      <t>
+        
+          Case 1: Transmission of 2MB to 98% of nodes within 7 days
+          (Firmware updates)
+        
+      </t>
+      <t>
+        
+          Case 2: Transmission of 50kB to 98% of nodes within 3 days
+          (File transfers)
+        
+      </t>
+    </list></t>
+    <t>
+      Assuming MTU=1500, we can estimate how many bytes we need to
+      transfer to satisfy the use cases.
+    </t>
+    <t><list style="symbols">
+      <t>
+        
+          approx 1400 packets in 7 days for firmware updates (case 1)
+        
+      </t>
+      <t>
+        
+          approx 100 packets in 3 days for file transfers (case 2)
+        
+      </t>
+    </list></t>
+  </section>
+  <section title="Per-Hop Requirement for File Transfer" anchor="per-hop-requirement-for-file-transfer">
+    
+    <t>
+      Case 1: - 2MB/7 days = 3.5 bytes per second - 1500 octet payload
+      =&gt; approx 1 data packet in 7 minutes - approx 1400 packets in 7
+      days (1 packet in 432 seconds)
+    </t>
+    <t>
+      Case 2: - 50KB/3 days = 0.19 bytes per second - 1500 octet payload
+      =&gt; approx 1 data packet in 2 hour 20 min. - approx 100 packets
+      in 3 days (1 packet in 2592 seconds)
+    </t>
+  </section>
+</section>
+<section title="Other Topics" anchor="other-topics">
+  
+  <t>
+    This section accommodates other topics for manageable multicast over
+    mesh networks.
+  </t>
+  <section title="Initial state (small start) and growth of networks" anchor="initial-state-small-start-and-growth-of-networks">
+    
+    <t>
+      Smart meter networks are likely to start from small network around
+      a data aggregation point (DAP) and grows as normal meters replaced
+      by smart meters. Hence, network size shall change time to time. In
+      such use cases, some default set of parameters may not appropriate
+      for lifetime of a network.
+    </t>
+    <t>
+      Hence, a method (management interface) to update MPL parameters in
+      a network is required. Candidates are SNMP, netconf, DHCPv6, or
+      <xref target="I-D.vanderstok-core-comi">CoMI</xref>.
+    </t>
+    <t>
+      Requirements for management interface are as follows:
+    </t>
+    <t><list style="symbols">
+      <t>
+        
+          Simple and short packet
+        
+      </t>
+      <t>
+        
+          Updateable
+        
+      </t>
+      <t>
+        
+          Can work without per-device configuration prior to install
+        
+      </t>
+      <t>
+        
+          Be able to 'broadcast' the configuration
+        
+      </t>
+    </list></t>
+  </section>
+</section>
+<section title="IANA Considerations" anchor="iana-considerations">
+  
+  <t>
+    This document does not make any request to IANA.
+  </t>
+</section>
+<section title="Security Considerations" anchor="security-considerations">
+  
+  <t>
+    No new security threat is identified by this requirement.
+  </t>
+</section>
+
+</middle>
+
+<back>
+    <references title="Normative References">
+        <!-- rfc include="../refs/reference.RFC.2119.xml" -->
+<?xml version="1.0" encoding="UTF-8"?>
+<reference anchor="I-D.vanderstok-core-comi">
+<front>
+<title>CoAp Management Interfaces</title>
+
+<author initials="P" surname="Stok" fullname="Peter Van der Stok">
+    <organization/>
+</author>
+
+<date month="June" day="28" year="2013"/>
+
+<abstract><t>The draft describes an interface based on CoAP to manage constrained devices.  Access to existing MIBs is included.  The proposed integration of CoAP with SNMP reduces the code size by removing an important part of the SNMP code.  The draft lists a set of CoMI objects that describe the operational settings of the applications on the device.  A majority of them is taken over from other drafts to provide one uniform CoMI based access.  Note  Discussion and suggestions for improvement are requested, and should be sent to core@ietf.org.</t></abstract>
+
+</front>
+
+<seriesInfo name="Internet-Draft" value="draft-vanderstok-core-comi-00"/>
+<format type="TXT" target="http://www.ietf.org/internet-drafts/draft-vanderstok-core-comi-00.txt"/>
+<format type="PDF" target="http://www.ietf.org/internet-drafts/draft-vanderstok-core-comi-00.pdf"/>
+</reference><?xml version='1.0' encoding='UTF-8'?>
+
+<reference anchor='UCAIug.SGRequirements'
+           target='http://osgug.ucaiug.org/UtiliComm/Shared Documents/Forms/DispForm.aspx?ID=702'>
+<front>
+<title>Smart Grid Network System Requirements Specification</title>
+<date month='October' day='19' year='2010' />
+</front>
+
+<format type='HTML' target='http://osgug.ucaiug.org/UtiliComm/Shared Documents/Forms/DispForm.aspx?ID=702' />
+</reference>
+    </references>
+<!-- This document was prepared using Pandoc2rfc, https://github.com/miekg/pandoc2rfc -->
+
+  
+<section title="Acknowledgement" anchor="acknowledgement">
+  
+  <t>
+    This document are based on discussions with ZigBee NAN working group
+    members and detailed documents from UCAIug.
+  </t>
+</section>
+
+</back>
+</rfc>
